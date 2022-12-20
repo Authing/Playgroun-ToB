@@ -7,6 +7,8 @@ export const authingClient=new AuthenticationClient({
     redirectUri:'http://localhost:8082/authinglogin?'
 });
 
+export const appId="63981463f8d0a068ad0d9878";
+
 export var tenantId='';
 export function setTenantId(value){
   tenantId=value;

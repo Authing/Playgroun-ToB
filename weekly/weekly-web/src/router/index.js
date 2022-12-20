@@ -27,6 +27,8 @@ const adminLog = () => import("@/views/admin/adminLog");
 
 const authinglogin=()=>import("@/views/authing/index");
 
+const adminRole=()=>import("@/views/role/index");
+
 Vue.use(Router)
 
 export default new Router({
@@ -115,6 +117,15 @@ export default new Router({
         component: adminLog,
         meta: {
           zhName: '管理日志',
+          key: '5-2',
+          role: 1
+        }
+      },{
+        path: '/admin/role',
+        name: 'adminRole',
+        component: adminRole,
+        meta: {
+          zhName: '角色管理',
           key: '5-2',
           role: 1
         }

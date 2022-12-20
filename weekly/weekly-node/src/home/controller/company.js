@@ -18,9 +18,9 @@ module.exports = class extends Base {
     // }
 
     try {
-      let userinfo = this.post("userInfo");
+      let userInfo = this.post("userInfo");
       let tenantId = this.post("tenantId");
-      if (userinfo.role == 1 || userinfo.role == 2) {
+      if (userInfo.role == 1 || userInfo.role == 2) {
         var listResult = await managementClient.org.getOrgByTenantId(tenantId);
 
         var arr = new Array();
@@ -235,149 +235,262 @@ module.exports = class extends Base {
     // } catch (e) {
     //   return this.fail(`删除失败${e}`);
     // }
-    try{
-      let {orgId,id,userInfo}=this.post();
-      if(userInfo.role==1){
-       var result= await managementClient.org.deleteNode(orgId,id);
-       return this.success('删除成功');
-      }else{
-        return this.fail('你没有权限');
+    try {
+      let { orgId, id, userInfo } = this.post();
+      if (userInfo.role == 1) {
+        var result = await managementClient.org.deleteNode(orgId, id);
+        return this.success("删除成功");
+      } else {
+        return this.fail("你没有权限");
       }
-    }catch(e){
+    } catch (e) {
       return this.fail(`删除失败 ${e.message}`);
     }
   }
 
   /*公司新增部门*/
   async addDepartmentAction() {
-    let { department_id, department_name, type, id, company_id, company_name } =
-      this.post();
+    // let { department_id, department_name, type, id, company_id, company_name,orgId } =
+    //   this.post();
+    // try {
+    //   if (type == "add") {
+    //     if (this.user.role == 1 && company_id && company_name) {
+    //       let userExistId = await this.model("department")
+    //         .where({
+    //           company_id,
+    //           department_id,
+    //         })
+    //         .select();
+    //       if (!think.isEmpty(userExistId)) {
+    //         return this.fail("部门ID已经存在");
+    //       }
+    //       let userExistName = await this.model("department")
+    //         .where({
+    //           company_id,
+    //           department_name,
+    //         })
+    //         .select();
+    //       if (!think.isEmpty(userExistName)) {
+    //         return this.fail("部门名称已经存在");
+    //       }
+    //       await this.model("department").add({
+    //         company_id: company_id,
+    //         company_name: company_name,
+    //         department_id,
+    //         department_name,
+    //       });
+    //     } else if (this.user.role == 2) {
+    //       let userExistId = await this.model("department")
+    //         .where({
+    //           company_id: this.user.company_id,
+    //           department_id,
+    //         })
+    //         .select();
+    //       if (!think.isEmpty(userExistId)) {
+    //         return this.fail("部门ID已经存在");
+    //       }
+    //       let userExistName = await this.model("department")
+    //         .where({
+    //           company_id: this.user.company_id,
+    //           department_name,
+    //         })
+    //         .select();
+    //       if (!think.isEmpty(userExistName)) {
+    //         return this.fail("部门名称已经存在");
+    //       }
+    //       await this.model("department").add({
+    //         company_id: this.user.company_id,
+    //         company_name: this.user.company_name,
+    //         department_id,
+    //         department_name,
+    //       });
+    //     }
+    //     return this.success("添加成功");
+    //   } else if (type == "edit") {
+    //     if (this.user.role == 1 && company_id && company_name) {
+    //       await this.model("department")
+    //         .where({
+    //           id,
+    //           company_id: company_id,
+    //           company_name: company_name,
+    //         })
+    //         .update({
+    //           department_name,
+    //         });
+    //     } else if (this.user.role == 2) {
+    //       await this.model("department")
+    //         .where({
+    //           id,
+    //           company_id: this.user.company_id,
+    //           company_name: this.user.company_name,
+    //         })
+    //         .update({
+    //           department_name,
+    //         });
+    //     }
+    //     return this.success("修改成功");
+    //   }
+    // } catch (e) {
+    //   return this.fail("添加失败", e);
+    // }
     try {
+      let {
+        department_id,
+        department_name,
+        type,
+        id,
+        company_id,
+        company_name,
+        org_id,
+      } = this.post();
+
       if (type == "add") {
-        if (this.user.role == 1 && company_id && company_name) {
-          let userExistId = await this.model("department")
-            .where({
-              company_id,
-              department_id,
-            })
-            .select();
-          if (!think.isEmpty(userExistId)) {
-            return this.fail("部门ID已经存在");
-          }
-          let userExistName = await this.model("department")
-            .where({
-              company_id,
-              department_name,
-            })
-            .select();
-          if (!think.isEmpty(userExistName)) {
-            return this.fail("部门名称已经存在");
-          }
-          await this.model("department").add({
-            company_id: company_id,
-            company_name: company_name,
-            department_id,
-            department_name,
-          });
-        } else if (this.user.role == 2) {
-          let userExistId = await this.model("department")
-            .where({
-              company_id: this.user.company_id,
-              department_id,
-            })
-            .select();
-          if (!think.isEmpty(userExistId)) {
-            return this.fail("部门ID已经存在");
-          }
-          let userExistName = await this.model("department")
-            .where({
-              company_id: this.user.company_id,
-              department_name,
-            })
-            .select();
-          if (!think.isEmpty(userExistName)) {
-            return this.fail("部门名称已经存在");
-          }
-          await this.model("department").add({
-            company_id: this.user.company_id,
-            company_name: this.user.company_name,
-            department_id,
-            department_name,
-          });
-        }
+        var result = await managementClient.org.addNode(org_id, company_id, {
+          name: department_name,
+        });
         return this.success("添加成功");
       } else if (type == "edit") {
-        if (this.user.role == 1 && company_id && company_name) {
-          await this.model("department")
-            .where({
-              id,
-              company_id: company_id,
-              company_name: company_name,
-            })
-            .update({
-              department_name,
-            });
-        } else if (this.user.role == 2) {
-          await this.model("department")
-            .where({
-              id,
-              company_id: this.user.company_id,
-              company_name: this.user.company_name,
-            })
-            .update({
-              department_name,
-            });
-        }
+        var result = await managementClient.org.updateNode(department_id, {
+          name: department_name,
+        });
         return this.success("修改成功");
       }
     } catch (e) {
-      return this.fail("添加失败", e);
+      return this.fail(e);
     }
   }
 
   /*公司删除部门*/
   async deleteDepartmentAction() {
-    let company_id = this.user.company_id || this.post("company_id");
-    let { department_id } = this.post();
+    // let company_id = this.user.company_id || this.post("company_id");
+    // let { department_id } = this.post();
+    // try {
+    //   await this.model("department")
+    //     .where({ company_id, department_id })
+    //     .delete();
+    //   await this.model("user").where({ company_id, department_id }).delete();
+    //   await this.model("week").where({ company_id, department_id }).delete();
+    //   return this.success("删除成功");
+    // } catch (e) {
+    //   return this.fail(`删除失败${e}`);
+    // }
+
     try {
-      await this.model("department")
-        .where({ company_id, department_id })
-        .delete();
-      await this.model("user").where({ company_id, department_id }).delete();
+      let { department_id, company_id, org_id } = this.post();
+
+      //删除用户
+      var users = await managementClient.org.listMembers(department_id);
+      if (users.totalCount > 0) {
+        var userIds = users.list.map((item) => item.id);
+        var removeUse = await managementClient.org.removeMembers(
+          department_id,
+          userIds
+        );
+      }
+      //删除部门
+      var deleteNode = await managementClient.org.deleteNode(
+        org_id,
+        department_id
+      );
+      //删除周报
       await this.model("week").where({ company_id, department_id }).delete();
+
       return this.success("删除成功");
     } catch (e) {
-      return this.fail(`删除失败${e}`);
+      return this.fail(`删除失败 ${e}`);
     }
   }
 
   /*获取所有的人列表*/
   async getAllMemberListAction() {
-    let page = this.post("pageNum");
-    let pagesize = this.post("pageSize");
-    let company_id = this.post("company_id");
-    if (!page) {
-      page = "1";
-    }
-    if (!pagesize) {
-      pagesize = "10";
-    }
-    let allMemberList;
+    // let page = this.post("pageNum");
+    // let pagesize = this.post("pageSize");
+    // let company_id = this.post("company_id");
+    // if (!page) {
+    //   page = "1";
+    // }
+    // if (!pagesize) {
+    //   pagesize = "10";
+    // }
+    // let allMemberList;
+    // try {
+    //   allMemberList = await this.model("user")
+    //     .field(
+    //       "id, company_id, company_name, department_id, department_name, email, role, role_name, username, usernum,telephone"
+    //     )
+    //     .where({
+    //       company_id: company_id,
+    //     })
+    //     .order("company_id asc, department_id asc, role asc")
+    //     .page(page, pagesize)
+    //     .countSelect();
+    //   return this.success(allMemberList);
+    // } catch (e) {
+    //   return this.fail(e);
+    // }
     try {
-      allMemberList = await this.model("user")
-        .field(
-          "id, company_id, company_name, department_id, department_name, email, role, role_name, username, usernum,telephone"
-        )
-        .where({
-          company_id: company_id,
-        })
-        .order("company_id asc, department_id asc, role asc")
-        .page(page, pagesize)
-        .countSelect();
-      return this.success(allMemberList);
+      let { page, pagesize, company_id, app_id } = this.post();
+      if (!page) {
+        page = 1;
+      }
+      if (!pagesize) {
+        pagesize = 10;
+      }
+      var allUserList = new Array();
+      var totalUser = await managementClient.org.listMembers(company_id, {
+        includeChildrenNodes: true,
+      });
+      var company = await managementClient.org.getNodeById(company_id);
+      if (company.children) {
+        for (let index = 0; index < company.children.length; index++) {
+          const element = company.children[index];
+          var nodeInfo = await managementClient.org.getNodeById(element);
+          var userList = await managementClient.org.listMembers(element);
+          for (let index = 0; index < userList.totalCount; index++) {
+            const user = userList.list[index];
+            let roleInfo = await managementClient.users.listRoles(
+              user.id,
+              app_id
+            );
+
+            //获取用户的自定义数据
+            var udf = await managementClient.users.getUdfValue(user.id);
+            user.usernum=udf.usernum;
+            let member = this.userMapperToMember(
+              user,
+              nodeInfo,
+              company,
+              roleInfo.totalCount > 0 ? roleInfo.list[0] : null
+            );
+
+            allUserList.push(member);
+          }
+        }
+      }
+
+      return this.success({
+        data: allUserList,
+        count: totalUser.totalCount,
+      });
     } catch (e) {
-      return this.fail(e);
+      return this.fail(JSON.stringify(e));
     }
+  }
+
+  userMapperToMember(user, node, parentNode, roleInfo) {
+    return {
+      id: user.id,
+      telephone: user.phone,
+      email: user.email,
+      usernum: user.usernum,
+      username: user.name,
+      company_id: parentNode.id,
+      company_name: parentNode.name,
+      department_id: node.id,
+      department_name: node.name,
+      role: roleInfo == null ? "" : roleInfo.code,
+      role_name: roleInfo == null ? "" : roleInfo.description,
+    };
   }
 
   /**

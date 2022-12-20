@@ -152,7 +152,6 @@
       ]),
       queryCompany(){
         this.getAllCompanyList({tenantId:tenantId,userInfo:this.userInfo}).then(res => {
-          console.log(res);
           if(res.errno == 0){
             this.companyList = res.data;
           }else{

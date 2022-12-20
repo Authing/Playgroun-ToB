@@ -276,32 +276,61 @@ module.exports = class extends Base {
   }
   /*获取公司下所有部门-无分页-有搜索*/
   async getAllDepartmentListAction() {
-    if (this.user.role == 1) {
-      let company_id = this.post('company_id');
-      try {
-        let department = await this.model('department')
-          .where({
-            company_id: company_id,
-          })
-          .select();
-        return this.success(department);
-      } catch (e) {
-        return this.fail(e);
+    // if (this.user.role == 1) {
+    //   let company_id = this.post('company_id');
+    //   try {
+    //     let department = await this.model('department')
+    //       .where({
+    //         company_id: company_id,
+    //       })
+    //       .select();
+    //     return this.success(department);
+    //   } catch (e) {
+    //     return this.fail(e);
+    //   }
+    // } else {
+    //   let company_id = this.user.company_id;
+    //   // let searchContent = this.post('searchContent');
+    //   try {
+    //     let department = await this.model('department')
+    //       .where({
+    //         company_id: company_id,
+    //         // 'company_id|company_name|department_id|department_name': ["like", "%"+searchContent+"%"],
+    //       })
+    //       .select();
+    //     return this.success(department);
+    //   } catch (e) {
+    //     return this.fail(e);
+    //   }
+    // }
+
+    try{
+     let {userInfo,company_id}=this.post();
+     if(userInfo.role==1){
+
+      var node=await managementClient.org.getNodeById(company_id);
+
+      var result=await managementClient.org.listChildren(company_id);
+
+      var arr=new Array();
+      if(result || result.length>0){
+        for (let index = 0; index < result.length; index++) {
+          const element = result[index];
+          
+          let dep=this.nodeMapperToDepartment(element,node);
+        
+          arr[index]=dep;
+        }
+        return this.success(arr);
+      }else{
+        return this.success();
       }
-    } else {
-      let company_id = this.user.company_id;
-      // let searchContent = this.post('searchContent');
-      try {
-        let department = await this.model('department')
-          .where({
-            company_id: company_id,
-            // 'company_id|company_name|department_id|department_name': ["like", "%"+searchContent+"%"],
-          })
-          .select();
-        return this.success(department);
-      } catch (e) {
-        return this.fail(e);
-      }
+     }
+     else{
+       
+     }
+    }catch(e){
+      return this.fail(e);
     }
   }
   /*部门概览页-部门人数，未写周报人数，已写周报人数，历史周报人数*/
@@ -406,4 +435,14 @@ module.exports = class extends Base {
       return this.fail(e);
     }
   }
+
+  nodeMapperToDepartment(node,parentNode){
+    return {
+      department_id:node.id,
+      department_name:node.name,
+      company_id:parentNode.id,
+      company_name:parentNode.name,
+    }
+  }
 };
+

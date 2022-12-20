@@ -113,6 +113,95 @@ module.exports = class extends Base {
   }
 
   async registerAction() {
+    // let company_id = this.user.company_id || this.post("company_id");
+    // let company_name = this.user.company_name || this.post("company_name");
+    // let department_id = this.user.department_id || this.post("department_id");
+    // let department_name =
+    //   this.user.department_name || this.post("department_name");
+    // let { username, usernum, email, telephone, type, id } = this.post();
+    // let role = this.post("role") || 4;
+    // let role_name = this.post("role_name") || "成员";
+    // try {
+    //   if (type == "add" || type == "companyAdminAdd") {
+    //     let userExist = await this.model("user")
+    //       .where({
+    //         usernum,
+    //       })
+    //       .select();
+    //     if (!think.isEmpty(userExist)) {
+    //       return this.fail("工号已经存在");
+    //     }
+    //     const salt = "weekly";
+    //     let password = think.md5(salt + "88886666");
+    //     let dateTime = new Date();
+    //     let create_time =
+    //       dateTime.getFullYear() +
+    //       "-" +
+    //       Number(dateTime.getMonth() + 1) +
+    //       "-" +
+    //       dateTime.getDate() +
+    //       " " +
+    //       dateTime.getHours() +
+    //       ":" +
+    //       dateTime.getMinutes() +
+    //       ":" +
+    //       dateTime.getSeconds();
+    //     await this.model("user").add({
+    //       usernum,
+    //       username,
+    //       telephone,
+    //       role,
+    //       role_name,
+    //       password,
+    //       email,
+    //       company_id,
+    //       company_name,
+    //       department_id,
+    //       department_name,
+    //       create_time,
+    //     });
+    //     return this.success("添加成功");
+    //   } else if (type == "edit" || type == "companyAdminEdit") {
+    //     if (id) {
+    //       let dateTime = new Date();
+    //       let update_time =
+    //         dateTime.getFullYear() +
+    //         "-" +
+    //         Number(dateTime.getMonth() + 1) +
+    //         "-" +
+    //         dateTime.getDate() +
+    //         " " +
+    //         dateTime.getHours() +
+    //         ":" +
+    //         dateTime.getMinutes() +
+    //         ":" +
+    //         dateTime.getSeconds();
+    //       await this.model("user")
+    //         .where({
+    //           id,
+    //         })
+    //         .update({
+    //           usernum,
+    //           username,
+    //           telephone,
+    //           role,
+    //           role_name,
+    //           email,
+    //           company_id,
+    //           company_name,
+    //           department_id,
+    //           department_name,
+    //           update_time,
+    //         });
+    //       return this.success("修改成功");
+    //     } else {
+    //       return this.fail("缺少参数id");
+    //     }
+    //   }
+    // } catch (e) {
+    //   return this.fail("添加失败", e);
+    // }
+
     let company_id = this.user.company_id || this.post("company_id");
     let company_name = this.user.company_name || this.post("company_name");
     let department_id = this.user.department_id || this.post("department_id");
@@ -121,102 +210,69 @@ module.exports = class extends Base {
     let { username, usernum, email, telephone, type, id } = this.post();
     let role = this.post("role") || 4;
     let role_name = this.post("role_name") || "成员";
+    let app_id = this.post("app_id");
     try {
       if (type == "add" || type == "companyAdminAdd") {
-        let userExist = await this.model("user")
-          .where({
-            usernum,
-          })
-          .select();
-        if (!think.isEmpty(userExist)) {
-          return this.fail("工号已经存在");
-        }
-        const salt = "weekly";
-        let password = think.md5(salt + "88886666");
-        let dateTime = new Date();
-        let create_time =
-          dateTime.getFullYear() +
-          "-" +
-          Number(dateTime.getMonth() + 1) +
-          "-" +
-          dateTime.getDate() +
-          " " +
-          dateTime.getHours() +
-          ":" +
-          dateTime.getMinutes() +
-          ":" +
-          dateTime.getSeconds();
-        await this.model("user").add({
-          usernum,
-          username,
-          telephone,
-          role,
-          role_name,
-          password,
+        let addUserResult = await managementClient.users.create({
+          name: username,
           email,
-          company_id,
-          company_name,
-          department_id,
-          department_name,
-          create_time,
+          phone: telephone,
         });
+        var setUDF = await managementClient.users.setUdfValue(
+          addUserResult.id,
+          { usernum }
+        );
+        //设置角色
+        var addRole = await managementClient.roles.addUsers(
+          role,
+          [addUserResult.id],
+          app_id
+        );
+
+        //添加到部门
+        var addDep = await managementClient.org.addMembers(department_id, [
+          addUserResult.id,
+        ]);
+
         return this.success("添加成功");
       } else if (type == "edit" || type == "companyAdminEdit") {
-        if (id) {
-          let dateTime = new Date();
-          let update_time =
-            dateTime.getFullYear() +
-            "-" +
-            Number(dateTime.getMonth() + 1) +
-            "-" +
-            dateTime.getDate() +
-            " " +
-            dateTime.getHours() +
-            ":" +
-            dateTime.getMinutes() +
-            ":" +
-            dateTime.getSeconds();
-          await this.model("user")
-            .where({
-              id,
-            })
-            .update({
-              usernum,
-              username,
-              telephone,
-              role,
-              role_name,
-              email,
-              company_id,
-              company_name,
-              department_id,
-              department_name,
-              update_time,
-            });
-          return this.success("修改成功");
-        } else {
-          return this.fail("缺少参数id");
-        }
+        let updateUser = await managementClient.users.update(id, {
+          email,
+          phone: telephone,
+          name:username
+        });
+
+        return this.success('修改成功');
       }
     } catch (e) {
-      return this.fail("添加失败", e);
+      return this.fail(`添加失败 ${e.message}`);
     }
   }
 
   async deleteUserAction() {
-    let { usernum } = this.post();
-    let company_id = this.user.company_id || this.post("company_id");
-    let department_id = this.user.department_id || this.post("department_id");
-    try {
-      await this.model("user")
-        .where({ usernum, company_id, department_id })
-        .delete();
-      await this.model("week")
-        .where({ usernum, company_id, department_id })
-        .delete();
+    // let { usernum } = this.post();
+    // let company_id = this.user.company_id || this.post("company_id");
+    // let department_id = this.user.department_id || this.post("department_id");
+    // try {
+    //   await this.model("user")
+    //     .where({ usernum, company_id, department_id })
+    //     .delete();
+    //   await this.model("week")
+    //     .where({ usernum, company_id, department_id })
+    //     .delete();
+    //   return this.success("删除成功");
+    // } catch (e) {
+    //   return this.fail(`删除失败${e}`);
+    // }
+    try{
+      let { usernum,userId,nodeId } = this.post();
+      let company_id = this.user.company_id || this.post("company_id");
+      let department_id = this.user.department_id || this.post("department_id");
+
+      var result= await managementClient.users.delete(userId);
       return this.success("删除成功");
-    } catch (e) {
-      return this.fail(`删除失败${e}`);
+    }catch(e){
+      return this.fail(`删除失败 ${e.message}`);
     }
   }
 
@@ -250,7 +306,7 @@ module.exports = class extends Base {
 
   //Authing 用户管理相关
   //新增用户
-  async addUserToTenantAction() {
+  async addUserAction() {
     try {
       //先新建用户
       let user = this.post("user");
@@ -313,5 +369,4 @@ module.exports = class extends Base {
       return this.fail(e);
     }
   }
-
 };

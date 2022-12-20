@@ -188,6 +188,7 @@
 
 <script>
   import { mapGetters, mapActions } from 'vuex';
+  import { authingClient, tenantId } from '../../authing/index'
   export default {
     data(){
       return {
@@ -211,7 +212,8 @@
         searchContent: '',
         companyId: '',
         companyOptions: [],
-        companyMap: []
+        companyMap: [],
+        org_id:''
       }
     },
     created(){
@@ -239,10 +241,12 @@
         this.queryDepartmentList();
       },
       queryCompanyList(){
-        this.getAllCompanyList().then(res => {
+
+        this.getAllCompanyList({userInfo:this.userInfo,tenantId:tenantId}).then(res => {
           if(res.errno == 0){
-            this.companyOptions = res.data[0].children;
+            this.companyOptions = res.data;
             this.companyId = this.companyOptions[0].company_id;
+            this.org_id=this.companyOptions[0].orgId;
             for(let i=0;i<this.companyOptions.length;i++){
               this.companyMap[this.companyOptions[i].company_id] = this.companyOptions[i].company_name;
             }
@@ -257,7 +261,8 @@
       },
       queryDepartmentList(){
         if(this.userInfo.role == 1){
-          this.getAllDepartmentList({company_id: this.companyId}).then( res => {
+          this.getAllDepartmentList({userInfo:this.userInfo,company_id: this.companyId}).then( res => {
+            console.log (res);
             if(res.errno == 0){
               this.departmentList = res.data;
             }else{
@@ -265,7 +270,7 @@
             }
           })
         }else if(this.userInfo.role == 2){
-          this.getAllDepartmentList({searchContent: this.searchContent}).then( res => {
+          this.getAllDepartmentList({userInfo:this.userInfo,searchContent: this.searchContent}).then( res => {
             if(res.errno == 0){
               this.departmentList = res.data;
             }else{
@@ -298,6 +303,7 @@
           this.loadingFlag = true;
           this.formUser.company_id = this.companyId;
           this.formUser.company_name = this.companyMap[this.companyId];
+          this.formUser.org_id=this.org_id;
           this.addDepartment(this.formUser).then(res => {
             if(res.errno == 0){
               this.$message.success(res.data || '添加成功');
@@ -320,7 +326,7 @@
       confirmDelete(){
         this.loadingFlag = true;
         if(this.userInfo.role == 1){
-          this.deleteDepartment({company_id: this.companyId, department_id: this.selectedItem.department_id}).then( res => {
+          this.deleteDepartment({company_id: this.companyId, department_id: this.selectedItem.department_id,org_id:this.org_id}).then( res => {
             if(res.errno == 0){
               this.$message.success('删除成功');
               this.confirmDeleteVisiable = false;
