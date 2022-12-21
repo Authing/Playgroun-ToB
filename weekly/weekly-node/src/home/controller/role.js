@@ -73,7 +73,7 @@ module.exports = class extends Base {
       let { company_id, department_id, app_id } = this.post();
 
       var roles=new Array();
-      var roleList = await managementClient.roles.list(1, 10, app_id);
+      var roleList = await managementClient.roles.list({page:1,limit:10,namespace:app_id});
       if(roleList.totalCount>0){
         for (let index = 0; index < roleList.list.length; index++) {
           const element = roleList.list[index];
@@ -89,6 +89,60 @@ module.exports = class extends Base {
       return this.fail(e);
     }
   }
+
+  /**
+   * 获取角色列表
+   * @returns 角色列表
+   */
+  async getRoleListAction(){
+    try{
+      let {pageSize,pageNum,app_id}=this.post();
+      var roleList= await managementClient.roles.list({page:pageNum,limit:pageSize,namespace:app_id});
+      return this.success({
+        data:roleList.list,
+        count:roleList.totalCount
+      });
+    }catch(e){
+      return this.fail(`获取角色列表失败 ${e.message}`);
+    }
+  }
+
+/**
+ * 
+ * @returns 添加角色结果
+ */
+  async addRoleAction(){
+    try{
+      let {oldCode,code,description,app_id,type,namespace}=this.post();
+
+      if(type=="add"){
+        var addRole=await managementClient.roles.create(code,description,app_id);
+        return this.success(addRole);
+      }else if(type="edit"){
+        var editRole=await managementClient.roles.update(oldCode,{namespace,description,newCode:code});
+        return this.success(editRole);
+      }
+     
+    }catch(e){
+      return this.fail(`添加角色失败 ${e.message}`);
+    }
+  }
+
+  /**
+   * 删除角色
+   * @returns 删除角色结果
+   */
+  async deleteRoleAction(){
+    try{
+      let {code,namespace}=this.post();
+
+      var deleteRole=await managementClient.roles.delete(code,namespace);
+      return this.success(deleteRole);
+    }catch(e){
+      return this.fail(`删除角色失败 ${e.message}`);
+    }
+  }
+
 
   roleMapperToLocal(role){
    return {

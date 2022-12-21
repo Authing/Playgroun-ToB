@@ -2,13 +2,13 @@
 const Base = require('./base');
 module.exports = class extends Base {
   async addWeeklyAction() {
-    let { content, date, id } = this.post();
-    let usernum = this.user.usernum;
-    let role = this.user.role;
-    let username = this.user.username;
+    let { content, date, id,userInfo } = this.post();
+    let usernum = userInfo.usernum;
+    let role = userInfo.role;
+    let username =userInfo.username;
     let time = new Date().getTime();
-    let department_id = this.user.department_id;
-    let company_id = this.user.company_id;
+    let department_id = userInfo.department_id;
+    let company_id = userInfo.company_id;
     /*计算一周时间戳*/
     let currentYear = new Date().getFullYear();
     let currentMonth = new Date().getMonth();
@@ -89,10 +89,13 @@ module.exports = class extends Base {
 
   /*获取本人-历史周报列表*/
   async getWeeklyListAction() {
-    let usernum = this.user.usernum;
-    let username = this.user.username;
-    let page = this.get('pageNum');
-    let pagesize = this.get('pageSize');
+   
+    let page = this.post('pageNum');
+    let pagesize = this.post('pageSize');
+    let userInfo=this.post('userInfo');
+    let usernum = userInfo.usernum;
+    let username = userInfo.username;
+
     if (!page) {
       page = '1';
     }
@@ -117,6 +120,7 @@ module.exports = class extends Base {
     let page = this.post('pageNum');
     let pagesize = this.post('pageSize');
     let searchContent = this.post('searchContent');
+    let userInfo=this.post("userInfo");
 
     let companyNumber;
     let companyWeeklyList;
@@ -149,32 +153,32 @@ module.exports = class extends Base {
     let endWeekStamp = currentTimeStamp + 1000 * (3600 * 24 * endWeekNum - 1);
     try {
       // select * from weekly.week_week inner join weekly.week_user on week_user.usernum = week_week.usernum where week_user.comapny_id = 'eastmoney' and week_user.department_id='dataCenter'
-      if (this.user.role == 2) {
+      if (userInfo.role == 2) {
         let companyWeeklyList = await this.model('week')
           .where({
             'username|usernum|content': ['like', '%' + searchContent + '%'],
-            company_id: this.user.company_id,
+            company_id: userInfo.company_id,
             time: { '>': startWeekStamp, '<': endWeekStamp },
-            role: { '>=': this.user.role },
+            role: { '>=': userInfo.role },
           })
           .order('department_id asc, role asc, time DESC')
           .page(page, pagesize)
           .countSelect();
         return this.success(companyWeeklyList);
-      } else if (this.user.role == 3) {
+      } else if (userInfo.role == 3) {
         let departmentWeeklyList = await this.model('week')
           .where({
             'username|usernum|content': ['like', '%' + searchContent + '%'],
-            company_id: this.user.company_id,
-            department_id: this.user.department_id,
+            company_id: userInfo.company_id,
+            department_id: userInfo.department_id,
             time: { '>': startWeekStamp, '<': endWeekStamp },
-            role: { '>=': this.user.role },
+            role: { '>=': userInfo.role },
           })
           .order('role asc, time DESC')
           .page(page, pagesize)
           .countSelect();
         return this.success(departmentWeeklyList);
-      } else if (this.user.role == 1) {
+      } else if (userInfo.role == 1) {
         let company = await this.model('company').select();
         let tempData = [];
         let companyWeeklyData;

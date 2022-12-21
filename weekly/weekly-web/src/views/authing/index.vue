@@ -6,7 +6,7 @@
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import { authingClient, setTenantId } from '../../authing/index'
+import { authingClient, setTenantId ,appId} from '../../authing/index'
 import jwtDecode from 'jwt-decode'
 
 export default {
@@ -25,7 +25,6 @@ export default {
     try {
       result = await authingClient.getAccessTokenByCode(loginCode)
     } catch (e) {
-      console.log(e)
       //guard 租户有问题，展示切换到 sso 登录
       //window.location.href='https://yy9dxad006c9tp7f.authing.cn';
     }
@@ -37,17 +36,26 @@ export default {
       result.access_token
     )
 
-    var resList = await authingClient.hasRole('admin')
+    try
+    {
+
+    userInfo= await authingClient.getCurrentUser();
+    }catch(e){
+      console.log('ff');
+    }
+    var udf= await authingClient.getUdfValue();
+    userInfo.usernum=udf.usernum;
+
+    var resList = await authingClient.hasRole('admin',appId)
     if (resList) {
       userInfo.role = 1
     } else {
-      var commo = await await authingClient.hasRole('member')
+      var commo = await await authingClient.hasRole('member',appId)
       if (commo) {
         userInfo.role = 4
       }
     }
 
-    console.log(userInfo)
     this.$store.commit('USER_INFO', userInfo)
 
     //跳转到主页

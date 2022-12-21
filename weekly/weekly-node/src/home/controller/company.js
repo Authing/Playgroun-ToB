@@ -41,6 +41,9 @@ module.exports = class extends Base {
           }
           return this.success(arr);
         }
+        else{
+          return this.success();
+        }
       }
     } catch (e) {
       return this.fail(e);

@@ -59,7 +59,7 @@ export default {
     return service.post('/home/weekly/getCurrentWeekly', params)
   },
   getWeeklyList: params => {
-    return service.get('/home/weekly/getWeeklyList', params)
+    return service.post('/home/weekly/getWeeklyList', params)
   },
   getDepartmentWeeklyList: params => {
     return service.post('/home/weekly/getDepartmentWeeklyList', params)
@@ -122,7 +122,6 @@ export default {
 
   //authing 相关的接口
   getAllOrgList: params => {
-    console.log(params);
     return service.post('/home/company/getAllOrgList', params)
   },
   addOrg: params => {
@@ -147,6 +146,15 @@ export default {
   },
   queryApplicationInfo:params=>{
     return service.post('/home/user/queryApplicationInfo', params)
+  },
+  getRoleList:params=>{
+    return service.post('/home/role/getRoleList', params)
+  },
+  addRole:params=>{
+    return service.post('/home/role/addRole', params)
+  },
+  deleteRole:params=>{
+    return service.post('/home/role/deleteRole', params)
   },
   /**
    * API demo

@@ -262,7 +262,6 @@
       queryDepartmentList(){
         if(this.userInfo.role == 1){
           this.getAllDepartmentList({userInfo:this.userInfo,company_id: this.companyId}).then( res => {
-            console.log (res);
             if(res.errno == 0){
               this.departmentList = res.data;
             }else{

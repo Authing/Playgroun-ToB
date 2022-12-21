@@ -54,7 +54,7 @@
     },
     computed: {
       ...mapGetters([
-
+        'userInfo'
       ])
     },
     methods: {
@@ -78,10 +78,12 @@
         return y + '-' + m + '-' + d+' '+h+':'+minute+':'+second;
       },
       submitWeekly(){
+        console.log(this.userInfo);
         var params = {
           content: this.weeklyContent,
           date: this.currentDate,
-          id:  this.weeklyId
+          id:  this.weeklyId,
+          userInfo:this.userInfo
         }
         if(this.weeklyContent){
           this.loadingFlag = true;

@@ -194,3 +194,21 @@ export const queryApplicationInfo = ({ commit }, params) => {
     return response
   })
 }
+
+export const getRoleList = ({ commit }, params) => {
+  return Api.getRoleList(params).then(response => {
+    return response
+  })
+}
+
+export const addRole = ({ commit }, params) => {
+  return Api.addRole(params).then(response => {
+    return response
+  })
+}
+
+export const deleteRole = ({ commit }, params) => {
+  return Api.deleteRole(params).then(response => {
+    return response
+  })
+}

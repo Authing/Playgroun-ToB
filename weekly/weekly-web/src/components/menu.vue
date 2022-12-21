@@ -53,8 +53,6 @@
       }
     },
     mounted:async function(){
-      console.log(authingClient.options.appId);
-
     },
     created() {
       // console.log(this.$router.options.routes, 'this.$router.options.routes');

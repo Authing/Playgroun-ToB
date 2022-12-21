@@ -11,7 +11,7 @@
         <el-col :span="11">
           <el-row type="flex" justify="end">
             <el-dropdown>
-              <div class="header-user-name">{{userInfo.name}}<i class="el-icon-caret-bottom el-icon--right"></i></div>
+              <div class="header-user-name">{{userInfo.username}}<i class="el-icon-caret-bottom el-icon--right"></i></div>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item>
                   <a class="a-style" @click="changPassword()">修改密码</a>
@@ -53,6 +53,7 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex";
+import { authingClient, tenantId } from '../authing/index'
 export default {
   name: "Header",
   data() {
@@ -78,18 +79,24 @@ export default {
   methods: {
     ...mapActions(["getUserInfo", "logout", "changePassword"]),
     signOut() {
-      this.logout().then(res => {
-        if (res.errno == 0) {
-          console.log(res);
-          //this.$router.push({ path: '/weekly/login' });
-          window.location.replace(res.data);
-          //this.$router.push({ path: res.data });
-          //console.log(res.$message);
-          this.$store.commit("USER_INFO", {});
-        } else {
-          this.$message.error(res.errmsg || "服务器开小差");
-        }
-      });
+       var loginUrl=authingClient.buildAuthorizeUrl({tenantId:'63a2720881051f217af2f969'});
+       console.log(loginUrl);
+      var url= authingClient.buildLogoutUrl({redirectUri:'https://www.baidu.com'});
+      console.log(url);
+      this.$store.commit("USER_INFO",{});
+      //window.location.replace(url);
+      // this.logout().then(res => {
+      //   if (res.errno == 0) {
+      //     console.log(res);
+      //     //this.$router.push({ path: '/weekly/login' });
+      //     window.location.replace(res.data);
+      //     //this.$router.push({ path: res.data });
+      //     //console.log(res.$message);
+      //     this.$store.commit("USER_INFO", {});
+      //   } else {
+      //     this.$message.error(res.errmsg || "服务器开小差");
+      //   }
+      // });
     },
     changPassword() {
       this.changePawwordVisiable = true;

@@ -192,6 +192,7 @@
 
 <script>
   import { mapGetters, mapActions } from 'vuex';
+  import { authingClient, tenantId, appId } from '../../authing/index'
   export default {
     data(){
       return {
@@ -393,7 +394,7 @@
       },
       /*admin-管理员*/
       allCompanyList(){
-        this.getAllCompanyList().then(res => {
+        this.getAllCompanyList({userInfo:this.userInfo,tenantId:tenantId}).then(res => {
           if(res.errno == 0){
             this.companyList = res.data;
           }else{
@@ -406,7 +407,7 @@
       },
       queryAdminWeeklyList(currentPage, pageSize){
         /*获取已写周报列表*/
-        this.getDepartmentWeeklyList({currentPage, pageSize, searchContent: this.searchContentAdmin}).then(res => {
+        this.getDepartmentWeeklyList({currentPage, pageSize, searchContent: this.searchContentAdmin,userInfo:this.userInfo}).then(res => {
           if(res.errno == 0){
             this.weeklyDataList = res.data;
           }else{

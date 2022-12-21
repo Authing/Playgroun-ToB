@@ -555,7 +555,6 @@
               this.confirmCreateVisiable = false;
               this.formUser = {};
             }else{
-              console.log (res);
               this.$message.error(res.errmsg || '服务器出了小差');
             }
             this.loadingFlag = false;

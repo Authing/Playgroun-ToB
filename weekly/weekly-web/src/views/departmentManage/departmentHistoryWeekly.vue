@@ -223,7 +223,6 @@
         })
       },
       editClick(row){
-        console.log(row,'row')
         this.editWeeklyContentRow = row;
         this.confirmSubmitVisiable = true;
         this.dialogTitle = '修改周报'

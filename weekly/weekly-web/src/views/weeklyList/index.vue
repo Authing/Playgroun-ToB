@@ -87,7 +87,7 @@
      this.weeklyList();
     },
     computed: {
-      ...mapGetters([])
+      ...mapGetters(['userInfo'])
     },
     methods: {
       ...mapActions([
@@ -117,7 +117,8 @@
         this.queryWeeklyList(1,10)
       },
       queryWeeklyList(currentPage, pageSize){
-        this.getWeeklyList({pageNum: currentPage, pageSize: pageSize}).then(res => {
+        console.log(this.userInfo);
+        this.getWeeklyList({pageNum: currentPage, pageSize: pageSize,userInfo:this.userInfo}).then(res => {
           if(res.errno == 0){
             this.weeklyTableData = res.data.data;
             this.weeklyListTotal = res.data.count;
@@ -137,7 +138,8 @@
         var params = {
           content: this.editWeeklyContent,
           date: this.currentDate,
-          id:  this.editWeeklyContentRow.id
+          id:  this.editWeeklyContentRow.id,
+          userInfo:this.userInfo
         }
         if(this.editWeeklyContent){
           this.loadingFlag = true;
