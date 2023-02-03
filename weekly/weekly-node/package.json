@@ -11,7 +11,7 @@
     "lint-fix": "eslint --fix src/"
   },
   "dependencies": {
-    "authing-js-sdk": "^4.23.36-rc.0",
+    "authing-js-sdk": "^4.23.39",
     "babel-runtime": "6.x.x",
     "think-cache": "^1.0.0",
     "think-cache-file": "^1.0.8",

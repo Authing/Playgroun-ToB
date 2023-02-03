@@ -1,6 +1,6 @@
 <template>
   <div class="divCss">
-    <p>1222222222222222222222222222222222222222222222222222222</p>
+    <p></p>
     <!-- <Guard   :appId="appId"></Guard> -->
   </div>
 </template>
@@ -23,7 +23,7 @@ export default {
     var loginCode = this.$route.query.code
     var result
     try {
-      result = await authingClient.getAccessTokenByCode(loginCode)
+      result = await authingClient.getAccessTokenByCode(loginCode);
     } catch (e) {
       //guard 租户有问题，展示切换到 sso 登录
       //window.location.href='https://yy9dxad006c9tp7f.authing.cn';

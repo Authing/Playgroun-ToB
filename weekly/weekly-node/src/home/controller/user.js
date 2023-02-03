@@ -369,4 +369,8 @@ module.exports = class extends Base {
       return this.fail(e);
     }
   }
+
+  async helloAction(){
+    return this.success("hello");
+  }
 };

@@ -9,7 +9,8 @@ import { serveUrl, getConfig, postConfig } from './config'
 // 继承vue的原型方法
 Vue.prototype.axios = axios
 const service = axios.create({
-  baseURL: '/weekly_node',
+  //baseURL: 'http://123.57.234.59:9095',
+  baseURL: 'http://127.0.0.1:8362',
   // baseURL: '/',
   timeout: 10000
 })
